@@ -1,0 +1,143 @@
+<!doctype html>
+
+<html>
+  <!-- Built with Divshot - http://www.divshot.com -->
+  
+  <head>
+    <title>New Page</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="html5uploader.js"></script>  
+    <style>
+      #code {
+        margin-bottom: 5px;
+      }
+      #submit {
+        margin-left: 45%;
+      }
+      #results td {
+        max-width: 200px;
+        overflow: auto;
+      }
+      #drop-box {
+        width: 300px;
+        height: 50px;
+        background-color: lightgray;
+        border-style: dashed;
+        border-color: grey;
+        border-radius: 25px;
+      }
+      #drop-box:hover {
+        background-color: grey;
+        border-color: lightgray;
+      }
+      .hidden {
+        display: none;
+      }
+      #box { 
+        width: inherit;
+        height: inherit;
+        z-index: 1;
+      }
+
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        var codeSubmitted  = false;
+        var fileUploaded  = false;
+        $("#content-stage").hide();
+        $("#result-stage").hide();
+        var upload = new uploader('drop-box','prompt', '/upload',null, function () {
+          fileUploaded = true;
+          $.get('/tablenames',function (data) {
+            if (JSON.parse(data)==[]) return;
+            $('#header-stage').hide();
+            $("#content-stage").show();
+            $("#title").text("Let's get to work");
+            var txt = "Your tables are: "+JSON.parse(data).join("||");
+            console.log(txt);
+            $('#tables').text(txt);
+          });
+        });
+            function getResult() {
+              $('#result-heads').children().remove();
+              $('#result-rows').children().remove();
+              $("#result-stage").show();
+              $.get('/code',{code: $('#code').val()},function(data) {
+                data = JSON.parse(data);
+                if (data[0]){
+                console.log(data);
+                var a = $("<tr id='head-row'></tr>");
+                var first = Object.keys(data[0]);
+                for (var head in first) {
+                  a.append("<th>"+first[head]+"</th>");
+                }
+                $("#result-heads").append(a);
+
+                for (var row in data) {
+                  var nr = $("<tr></tr>")
+                  var curRow = data[row];
+                  for (var key in first) {
+                    nr.append($("<td>"+curRow[first[key]]+"</td>"));
+                  }
+                  $('#result-rows').append(nr);
+                }
+                }
+              });
+            }
+            $(document).keypress(function(e) {if (e.which == 13) {
+              getResult();
+            }})        
+            $('#submit').click(function(e) {
+              getResult();
+            });
+        });
+
+    </script>
+  </head>
+  
+  <body>
+    <div class="container"><h1 id="title">Let's get started</h1></div>
+    <div class="container" ><h4 id="tables"></h4></div>
+    <div class="container" id="header-stage">
+      <label class="control-label" id="prompt">If you are on Windows, navigate to "C:\Users\YOURNAME\AppData\Local\Google\Chrome\User Data\Default" where YOURNAME is your username on Windows. Drag and drop the file named "History" into the area below.&nbsp;</label>
+      <aside id="drop-box">
+                <div id="box">  
+                <div id="status"></div>  
+                <div id="drop"></div>  
+        </div>  
+        <div id="list"></div>
+      </aside>
+      <div class="alert alert-dismissable alert-warning hidden" id="upload-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <b>Warning!</b> You best check yourself, you're not looking so good.
+      </div>
+    </div>
+    <div class="container" id="content-stage">
+      <form>
+        <div class="form-group">
+          <div class="controls"></div>
+        </div>
+      </form>
+      <div class="well" id="code-stage">
+        <label class="form-label">Type SQLite code here to discover amazing stuff.</label>
+        <form onsubmit="return false;">
+          <input type="textarea" class="form-control" id="code"></textarea>
+          <input type="button" class="btn btn-default" id="submit" value="Submit"/>
+        </form>
+      </div>
+    </div>
+    <div class="container" id="result-stage">
+      <span class="label label-default" id="result-label">Results</span>
+      <table class="table table-bordered table-hover" id="results">
+        <thead id="result-heads">
+        </thead>
+        <tbody id="result-rows">
+        </tbody>
+      </table>
+    </div>
+  </body>
+
+</html>

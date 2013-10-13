@@ -1,0 +1,12 @@
+{
+  "name": "Sqlistory",
+  "version": "0.0.0",
+  "description": "playing with chrome history via sqlite",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "author": "Ben Sammons",
+  "license": "MIT"
+}
