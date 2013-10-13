@@ -8,5 +8,9 @@
     "start": "node server.js"
   },
   "author": "Ben Sammons",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "sqlite3": "~2.1.17",
+    "express": "~3.4.0"
+  }
 }
