@@ -12,8 +12,8 @@
   "dependencies": {
     "sqlite3": "~2.1.17",
     "express": "~3.4.0"
-  },
-  "engines": {
+  }
+  "engines" {
     "node":"0.10.x",
     "npm":"1.2.x"
  }
